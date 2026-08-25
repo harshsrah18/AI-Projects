@@ -1,5 +1,5 @@
 "use client";
-import Image from "next/image";
+
 import { useState } from "react";
 
 export default function Home() {
@@ -7,7 +7,7 @@ export default function Home() {
   const [shortURL, setShortUrl] = useState("");
   const [generatedShortUrl, setGeneratedShortUrl] = useState("");
   const [retreivedLongUrl, setRetrievedLongUrl] = useState("");
-  const [error, setError] = useState<any>("");
+  const [error, setError] = useState("");
 
   const handleGenerateShortUrl = async () => {
     try {
@@ -16,11 +16,12 @@ export default function Home() {
         headers: {
           "Content-Type": "application/json",
         },
-        body:  JSON.stringify({ originalURL: longURL }),
+        body: JSON.stringify({ originalURL: longURL }),
       });
 
       const data = await response.json();
       console.log(data);
+
       if (response.ok) {
         setGeneratedShortUrl(data["data"]);
       } else {
@@ -28,7 +29,7 @@ export default function Home() {
       }
     } catch (error) {
       console.log(error);
-      setError(error);
+      setError(String(error));
     }
   };
 
@@ -36,6 +37,7 @@ export default function Home() {
     try {
       const response = await fetch(`http://localhost:3001/${shortURL}`);
       const data = await response.json();
+
       if (response.ok) {
         setRetrievedLongUrl(data.data);
       } else {
@@ -43,19 +45,29 @@ export default function Home() {
       }
     } catch (error) {
       console.log(error);
-      setError(error);
+      setError(String(error));
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col items-center justify-center p-4">
+      
       <h1 className="text-3xl font-bold mb-8 font-serif">
         Welcome to MicroUrl SaaS👋
       </h1>
 
+      {/* Error message */}
+      {error && (
+        <p className="mb-4 text-red-400">
+          {error}
+        </p>
+      )}
+
       {/* Generate a new Short URL */}
       <div className="w-full max-w-md bg-gray-800 rounded-lg p-6 mb-6">
-        <h2 className="text-xl font-semibold mb-4">Generate Short URL</h2>
+        <h2 className="text-xl font-semibold mb-4">
+          Generate Short URL
+        </h2>
 
         <input
           type="text"
@@ -64,6 +76,7 @@ export default function Home() {
           onChange={(e) => setLongUrl(e.target.value)}
           className="w-full p-3 rounded-lg bg-gray-700 text-gray-200"
         />
+
         <button
           className="w-full mt-4 bg-blue-600 rounded-lg hover:bg-blue-700 text-white py-2"
           onClick={handleGenerateShortUrl}
@@ -73,7 +86,8 @@ export default function Home() {
 
         {generatedShortUrl && (
           <p className="mt-4 text-green-400">
-            Short URL: <a href={`/${generatedShortUrl}`} target="_blank">
+            Short URL:{" "}
+            <a href={`/${generatedShortUrl}`} target="_blank">
               {generatedShortUrl}
             </a>
           </p>
@@ -82,7 +96,9 @@ export default function Home() {
 
       {/* Retrieve Long URL */}
       <div className="w-full max-w-md bg-gray-800 rounded-lg p-6">
-        <h2 className="text-xl font-semibold mb-4">Get your Long URL</h2>
+        <h2 className="text-xl font-semibold mb-4">
+          Get your Long URL
+        </h2>
 
         <input
           type="text"
@@ -91,6 +107,7 @@ export default function Home() {
           onChange={(e) => setShortUrl(e.target.value)}
           className="w-full p-3 rounded-lg bg-gray-700 text-gray-200"
         />
+
         <button
           className="w-full mt-4 bg-red-600 rounded-lg hover:bg-red-700 text-white py-2"
           onClick={handleRetrieveLongUrl}
@@ -100,7 +117,8 @@ export default function Home() {
 
         {retreivedLongUrl && (
           <p className="mt-4 text-green-400">
-            Long URL: <a href={`/${retreivedLongUrl}`} target="_blank">
+            Long URL:{" "}
+            <a href={`/${retreivedLongUrl}`} target="_blank">
               {retreivedLongUrl}
             </a>
           </p>

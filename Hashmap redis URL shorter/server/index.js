@@ -1,4 +1,3 @@
-
 import express from "express";
 import cors from "cors";
 import { createClient } from "redis";
